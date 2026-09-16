@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d0f12;
+            background-image: radial-gradient(circle at top, #1a1f26 0%, #0d0f12 70%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+            padding: 40px 20px;
+        }
+
+
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .gallery-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .gallery-header p {
+            color: #e9e5e5;
+            font-size: 1.1rem;
+        }
+
+        .gallery-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            max-width: 400px;
+            margin: 0 auto 40px auto;
+        }
+
+        #Input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #Input:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.05);
+        }
+
+        #Button {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #111;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #Button:hover {
+            background-color: #333;
+        }
+
+        #Button:active {
+            transform: scale(0.98);
+        }
+
+        #output {
+            font-size: 0.95rem;
+            color: #fff;
+            text-align: center;
+            min-height: 24px;
+            transition: 1s;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .gallery-grid-item {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            justify-self: center;
+        }
+
+        .gallery-grid-item>img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            display: block;
+            margin: 0 auto;
+            box-sizing: border-box;
+            object-fit: contain;
+            filter: brightness(0.95) contrast(1.05);
+            opacity: 0;
+            transform: scale(0.98);
+            animation: cinematicFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+            border: none;
+            background: none;
+            width: 28px;
+            height: 28px;
+        }
+
+        .btn::after {
+            content: "×";
+            position: absolute;
+            inset: 0;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover::after {
+            background-color: #e60000;
+            transform: scale(1.05);
+        }
+
+        @keyframes cinematicFade {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+     
+    </style>
+</head>
+
+<body>
+
+    <div class="gallery-container">
+        <header class="gallery-header">
+            <h1>Editorial Image Gallery</h1>
+            <p id="PA">A curated collection of images</p>
+        </header>
+
+        <div class="gallery-controls">
+            <input id="Input" placeholder="Enter image URL...">
+            <button id="Button">Display Image</button>
+            <div id="output"></div>
+        </div>
+
+        <main class="gallery-grid" id="galleryGrid">
+
+        </main>
+    </div>
+
+    <script>
+        let output = document.getElementById("output");
+        let Input = document.getElementById("Input");
+        let Button = document.getElementById("Button");
+
+        let CurrentInput;
+
+        function getImages() {
+            let data = localStorage.getItem("theImage");
+            return data ? JSON.parse(data) : [];
+        }
+
+        function appendElements(url) {
+            let grid = document.getElementById("galleryGrid");
+
+            let wrapper = document.createElement("div");
+            wrapper.className = "gallery-grid-item";
+
+            let img = document.createElement("img");
+            img.src = url;
+
+            let btn = document.createElement("button");
+            btn.className = "btn";
+
+            btn.addEventListener("click", function () {
+                wrapper.remove();
+                let images = getImages().filter(i => i !== url);
+                localStorage.setItem("theImage", JSON.stringify(images));
+            });
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(btn);
+            grid.appendChild(wrapper);
+        }
+
+        async function data() {
+            let input = document.getElementById("Input").value.trim();
+
+            if (input == "") return;
+
+            let images = getImages();
+            if (images.includes(input)) return;
+
+            output.textContent = "Fetching & Verifing image link..."
+
+            let request = await fetch("http://localhost:8000/app", {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify({ username: input })
+            });
+            let result = await request.json();
+            output.textContent = result.message;
+
+            if (result.message !== "Either URL is not an image or image is still loading" && result.message !== "An error occurred") {
+                images.push(input);
+                localStorage.setItem("theImage", JSON.stringify(images));
+
+                appendElements(input);
+                document.getElementById("Input").value = "";
+            }
+        }
+
+        Button.addEventListener("click", function () {
+            data();
+        })
+
+        Input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                data();
+            }
+        })
+
+        function loadimg() {
+            getImages().forEach(appendElements);
+        }
+        window.onload = loadimg;
+    </script>
+
+</body>
+
+</html>
