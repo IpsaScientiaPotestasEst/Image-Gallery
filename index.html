@@ -194,6 +194,12 @@
     </div>
 
     <script>
+
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            document.body.innerHTML = "<h2>This app is not available on mobile devices.</h2>";
+        }
+
+        
         let output = document.getElementById("output");
         let Input = document.getElementById("Input");
         let Button = document.getElementById("Button");
