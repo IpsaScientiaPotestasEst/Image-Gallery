@@ -8,32 +8,28 @@
     <style>
 
     
+
 #mobile-blocker {
     display: none;
-    background: #0f0f0f;
-    color: #e0e0e0;
+    color: #fff;
     text-align: center;
     padding: 40px 20px;
-    font-family: Arial, sans-serif;
 }
 
 
-@media (max-width: 767px), (pointer: coarse) {
-    body > * {
-        display: none !important; 
-    }
-    html, body {
-        background: #0f0f0f !important;
+@media (max-width: 767px) {
+    .gallery-container {
+        display: none !important;
     }
     #mobile-blocker {
         display: flex !important;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        margin: 0;
+        height: 80vh;
     }
 }
+
 
         * {
             box-sizing: border-box;
