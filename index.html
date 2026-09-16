@@ -238,7 +238,7 @@
 
             output.textContent = "Fetching & Verifing image link..."
 
-            let request = await fetch("http://localhost:8000/app", {
+            let request = await fetch("https://image-gallery-7dng.onrender.com/app", {
                 method: "POST",
                 headers: { "Content-type": "application/json" },
                 body: JSON.stringify({ username: input })
