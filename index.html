@@ -9,6 +9,7 @@
 
     
 
+/* Hidden by default on desktop screens */
 #mobile-blocker {
     display: none;
     color: #fff;
@@ -17,18 +18,23 @@
 }
 
 
-@media (max-width: 767px) {
-    .gallery-container {
-        display: none !important;
-    }
-    #mobile-blocker {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
+@media (max-width: 767px) and (any-pointer: coarse) {
+    
+
+    @media not (any-pointer: fine) {
+        .gallery-container {
+            display: none !important;
+        }
+        #mobile-blocker {
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
     }
 }
+
 
 
         * {
