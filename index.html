@@ -6,6 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <style>
+
+    
+#mobile-blocker {
+    display: none;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    text-align: center;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+
+@media (max-width: 767px), (pointer: coarse) {
+    body > * {
+        display: none !important; 
+    }
+    html, body {
+        background: #0f0f0f !important;
+    }
+    #mobile-blocker {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+}
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -175,6 +204,11 @@
 </head>
 
 <body>
+
+    <div id="mobile-blocker">
+    <h2>This app is not available on mobile devices.</h2>
+</div>
+
 
     <div class="gallery-container">
         <header class="gallery-header">
