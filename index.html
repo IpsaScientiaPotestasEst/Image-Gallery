@@ -1,3 +1,4 @@
+=
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,32 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <style>
+        #mobile-blocker {
+            display: none;
+            color: #fff;
+            text-align: center;
+            padding: 40px 20px;
+        }
 
-    
+        @media (max-width: 767px) and (hover: none) {
+            .gallery-container {
+                display: none !important;
+            }
 
-#mobile-blocker {
-    display: none;
-    color: #fff;
-    text-align: center;
-    padding: 40px 20px;
-}
-
-
-@media (max-width: 767px) and (hover: none) {
-    .gallery-container {
-        display: none !important;
-    }
-    #mobile-blocker {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
-    }
-}
-
-
-
+            #mobile-blocker {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 80vh;
+            }
+        }
 
         * {
             box-sizing: border-box;
@@ -41,15 +36,14 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #1C6EA4;
-            background: -moz-linear-gradient(left, #1C6EA4 0%, #155078 0%, #0E344F 100%);
-            background: -webkit-linear-gradient(left, #1C6EA4 0%, #155078 0%, #0E344F 100%);
-            background: linear-gradient(to right, #1C6EA4 0%, #155078 0%, #0E344F 100%);
+            background: #020751;
+            background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+            background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+            background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);
             min-height: 100vh;
             color: #333;
             padding: 40px 20px;
         }
-
 
         .gallery-container {
             max-width: 1200px;
@@ -59,6 +53,7 @@
         .gallery-header {
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
         }
 
         .gallery-header h1 {
@@ -71,6 +66,50 @@
         .gallery-header p {
             color: #e9e5e5;
             font-size: 1.1rem;
+        }
+
+
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .circle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .circle-btn:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .circle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
         }
 
         .gallery-controls {
@@ -198,46 +237,46 @@
                 transform: scale(1);
             }
         }
-
-     
     </style>
 </head>
 
 <body>
-
     <div id="mobile-blocker">
-    <h2>This app is not available on mobile devices.</h2>
-</div>
-
-
+        <h2>This app is not available on mobile devices.</h2>
+    </div>
     <div class="gallery-container">
         <header class="gallery-header">
+
+            <div class="header-buttons">
+                <button class="circle-btn btn-green" aria-label="Green theme" id="green"></button>
+                <button class="circle-btn btn-blue" aria-label="Blue theme" id="blue"></button>
+                <button class="circle-btn btn-red" aria-label="Red theme" id="red"></button>
+                <button class="circle-btn btn-purple" aria-label="Purple theme" id="purple"></button>
+            </div>
             <h1>Editorial Image Gallery</h1>
             <p id="PA">A curated collection of images</p>
         </header>
-
         <div class="gallery-controls">
             <input id="Input" placeholder="Enter image URL...">
             <button id="Button">Display Image</button>
             <div id="output"></div>
         </div>
-
         <main class="gallery-grid" id="galleryGrid">
-
         </main>
     </div>
-
     <script>
 
-        document.addEventListener("DOMContentLoaded", function() {
-    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        document.body.innerHTML = '<h2>This app is not available on mobile devices.</h2>';
-    }
-});
-        
+        document.addEventListener("DOMContentLoaded", function () {
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                document.body.innerHTML = '<h2>This app is not available on mobile devices.</h2>';
+            }
+        });
+
         let output = document.getElementById("output");
         let Input = document.getElementById("Input");
         let Button = document.getElementById("Button");
+
+
 
         let CurrentInput;
 
@@ -310,6 +349,49 @@
             getImages().forEach(appendElements);
         }
         window.onload = loadimg;
+
+
+        let greenbtn = document.getElementById("green");
+        let bluebtn = document.getElementById("blue");
+        let purplebtn = document.getElementById("purple");
+        let redbtn = document.getElementById("red");
+
+
+        greenbtn.addEventListener("click", function () {
+            document.body.style = `background: #118641;
+                background: #064408;
+                background: -moz-linear-gradient(left, #064408 0%, #0C6F0B 0%, #118B30 100%);
+                background: -webkit-linear-gradient(left, #064408 0%, #0C6F0B 0%, #118B30 100%);
+                background: linear-gradient(to right, #064408 0%, #0C6F0B 0%, #118B30 100%);`
+        })
+
+        bluebtn.addEventListener("click", function () {
+            document.body.style = `
+                background: #020751;
+                background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+                background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+                background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);`
+        })
+
+        redbtn.addEventListener("click", function () {
+            document.body.style = `background: #600006;
+                background: -moz-linear-gradient(left, #600006 0%, #A2091F 0%, #C90C0C 100%);
+                background: -webkit-linear-gradient(left, #600006 0%, #A2091F 0%, #C90C0C 100%);
+                background: linear-gradient(to right, #600006 0%, #A2091F 0%, #C90C0C 100%);
+                `
+        })
+
+        purplebtn.addEventListener("click", function () {
+            document.body.style = `background: #2F0453;
+                background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+                background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+                background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);
+                `
+        })
+
+
+
+
     </script>
 
 </body>
