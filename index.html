@@ -96,19 +96,31 @@
         }
 
         .btn-green {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: #0F7A17;
+            background: -moz-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+            background: -webkit-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+            background: linear-gradient(to right, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
         }
 
         .btn-blue {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: #020751;
+            background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+            background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+            background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);
         }
 
         .btn-red {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: #B70000;
+            background: -moz-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+            background: -webkit-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+            background: linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
         }
 
         .btn-purple {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            background: #2F0453;
+                background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+                background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+                background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);
         }
 
         .gallery-controls {
@@ -275,8 +287,6 @@
         let Input = document.getElementById("Input");
         let Button = document.getElementById("Button");
 
-
-
         let CurrentInput;
 
         function getImages() {
@@ -347,48 +357,64 @@
         function loadimg() {
             getImages().forEach(appendElements);
         }
-        window.onload = loadimg;
 
+        const colors = {
+            green: `background: #0F7A17;
+        background: -moz-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+        background: -webkit-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+        background: linear-gradient(to right, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);`,
+            red: `background: #B70000;
+        background: -moz-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+        background: -webkit-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+        background: linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);`,
+
+            blue: `background: #020751;
+        background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+        background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+        background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);`,
+
+            purple: `background: #2F0453;
+        background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+        background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+        background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);`
+        }
 
         let greenbtn = document.getElementById("green");
         let bluebtn = document.getElementById("blue");
         let purplebtn = document.getElementById("purple");
         let redbtn = document.getElementById("red");
 
-
         greenbtn.addEventListener("click", function () {
-            document.body.style = `background: #118641;
-                background: #064408;
-                background: -moz-linear-gradient(left, #064408 0%, #0C6F0B 0%, #118B30 100%);
-                background: -webkit-linear-gradient(left, #064408 0%, #0C6F0B 0%, #118B30 100%);
-                background: linear-gradient(to right, #064408 0%, #0C6F0B 0%, #118B30 100%);`
+            document.body.style.cssText = colors.green; 
+            localStorage.setItem("theme", "green")
         })
 
         bluebtn.addEventListener("click", function () {
-            document.body.style = `
-                background: #020751;
-                background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
-                background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
-                background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);`
+            document.body.style.cssText = colors.blue; 
+            localStorage.setItem("theme", "blue")
         })
 
         redbtn.addEventListener("click", function () {
-            document.body.style = `background: #600006;
-                background: -moz-linear-gradient(left, #600006 0%, #A2091F 0%, #C90C0C 100%);
-                background: -webkit-linear-gradient(left, #600006 0%, #A2091F 0%, #C90C0C 100%);
-                background: linear-gradient(to right, #600006 0%, #A2091F 0%, #C90C0C 100%);
-                `
+            document.body.style.cssText = colors.red; 
+            localStorage.setItem("theme", "red")
         })
 
         purplebtn.addEventListener("click", function () {
-            document.body.style = `background: #2F0453;
-                background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-                background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-                background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);
-                `
+            document.body.style.cssText = colors.purple; 
+            localStorage.setItem("theme", "purple")
         })
 
+        function iscolor() {
+            let Theme = localStorage.getItem("theme");
+            if (Theme && colors[Theme]) {
+                document.body.style.cssText = colors[Theme]; 
+            }
+        }
 
+        window.onload = function () {
+            iscolor();
+            loadimg();
+        }
 
 
     </script>
