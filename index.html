@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="Designer.png">
     <title>image gallery</title>
     <style>
         #mobile-blocker {
@@ -119,9 +118,9 @@
 
         .btn-purple {
             background: #2F0453;
-                background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-                background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-                background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);
+            background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+            background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+            background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);
         }
 
         .gallery-controls {
@@ -149,6 +148,44 @@
         #Input:focus {
             border-color: #111;
             box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.05);
+        }
+
+        #fileinput {
+            width: 100%;
+            padding: 8px;
+            font-size: 0.95rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        #fileinput:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #fileinput::file-selector-button {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: #fff;
+            color: #111;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #fileinput::file-selector-button:hover {
+            background-color: #e9e5e5;
+        }
+
+        #fileinput::file-selector-button:active {
+            transform: scale(0.97);
         }
 
         #Button {
@@ -258,7 +295,6 @@
     </div>
     <div class="gallery-container">
         <header class="gallery-header">
-
             <div class="header-buttons">
                 <button class="circle-btn btn-green" aria-label="Green theme" id="green"></button>
                 <button class="circle-btn btn-blue" aria-label="Blue theme" id="blue"></button>
@@ -270,11 +306,11 @@
         </header>
         <div class="gallery-controls">
             <input id="Input" placeholder="Enter image URL...">
-            <button id="Button">Display Image</button>
+            <input type="file" id="fileinput" accept="image/*">
+            <button id="Button">Add Image</button>
             <div id="output"></div>
         </div>
-        <main class="gallery-grid" id="galleryGrid">
-        </main>
+        <div class="gallery-grid" id="galleryGrid"></div>
     </div>
     <script>
 
@@ -288,6 +324,8 @@
         let Input = document.getElementById("Input");
         let Button = document.getElementById("Button");
 
+        let file = document.getElementById("fileinput");
+
         let CurrentInput;
 
         function getImages() {
@@ -295,14 +333,19 @@
             return data ? JSON.parse(data) : [];
         }
 
+        let img = document.createElement("img");
+
+
         function appendElements(url) {
             let grid = document.getElementById("galleryGrid");
 
             let wrapper = document.createElement("div");
             wrapper.className = "gallery-grid-item";
 
-            let img = document.createElement("img");
+
             img.src = url;
+
+
 
             let btn = document.createElement("button");
             btn.className = "btn";
@@ -317,6 +360,22 @@
             wrapper.appendChild(btn);
             grid.appendChild(wrapper);
         }
+
+        fileinput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+
+            if (file) {
+                const tempURL = URL.createObjectURL(file);
+
+
+                appendElements(tempURL);
+
+
+                let images = getImages();
+                images.push(tempURL);
+                localStorage.setItem("theImage", JSON.stringify(images));
+            }
+        });
 
         async function data() {
             let input = document.getElementById("Input").value.trim();
@@ -386,29 +445,29 @@
         let redbtn = document.getElementById("red");
 
         greenbtn.addEventListener("click", function () {
-            document.body.style.cssText = colors.green; 
+            document.body.style.cssText = colors.green;
             localStorage.setItem("theme", "green")
         })
 
         bluebtn.addEventListener("click", function () {
-            document.body.style.cssText = colors.blue; 
+            document.body.style.cssText = colors.blue;
             localStorage.setItem("theme", "blue")
         })
 
         redbtn.addEventListener("click", function () {
-            document.body.style.cssText = colors.red; 
+            document.body.style.cssText = colors.red;
             localStorage.setItem("theme", "red")
         })
 
         purplebtn.addEventListener("click", function () {
-            document.body.style.cssText = colors.purple; 
+            document.body.style.cssText = colors.purple;
             localStorage.setItem("theme", "purple")
         })
 
         function iscolor() {
             let Theme = localStorage.getItem("theme");
             if (Theme && colors[Theme]) {
-                document.body.style.cssText = colors[Theme]; 
+                document.body.style.cssText = colors[Theme];
             }
         }
 
