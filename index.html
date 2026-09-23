@@ -286,6 +286,47 @@
                 transform: scale(1);
             }
         }
+
+        /* Smooth scrolling for the whole page */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Align the button container vertically */
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Styled Jump Button */
+        #jmpbtn {
+            height: 32px;
+            /* Matches the exact height of your circle-btn elements */
+            padding: 0 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            /* Clean pill shape */
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #jmpbtn:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+            /* Parallel animation behavior to your theme circles */
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        #jmpbtn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 
@@ -296,6 +337,7 @@
     <div class="gallery-container">
         <header class="gallery-header">
             <div class="header-buttons">
+                <button id="jmpbtn">jump</button>
                 <button class="circle-btn btn-green" aria-label="Green theme" id="green"></button>
                 <button class="circle-btn btn-blue" aria-label="Blue theme" id="blue"></button>
                 <button class="circle-btn btn-red" aria-label="Red theme" id="red"></button>
@@ -312,7 +354,17 @@
         </div>
         <div class="gallery-grid" id="galleryGrid"></div>
     </div>
+
     <script>
+
+
+
+        document.getElementById("jmpbtn").addEventListener("click", function () {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth"
+            })
+        })
 
         document.addEventListener("DOMContentLoaded", function () {
             if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
@@ -333,7 +385,7 @@
             return data ? JSON.parse(data) : [];
         }
 
-        
+
 
 
         function appendElements(url) {
