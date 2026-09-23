@@ -288,7 +288,7 @@
             }
         }
 
-        
+
         html {
             scroll-behavior: smooth;
         }
@@ -300,8 +300,8 @@
             gap: 12px;
         }
 
-       
-        #jmpbtn {
+
+        .topbtn {
             height: 32px;
             padding: 0 14px;
             font-size: 0.85rem;
@@ -316,14 +316,18 @@
             transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        #jmpbtn:hover {
+        .topbtn:hover {
             background-color: rgba(255, 255, 255, 0.25);
             transform: scale(1.05);
             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
         }
 
-        #jmpbtn:active {
+        .topbtn:active {
             transform: scale(0.95);
+        }
+
+        #clearsaved {
+            background-color: red !important;
         }
     </style>
 </head>
@@ -335,12 +339,17 @@
     <div class="gallery-container">
         <header class="gallery-header">
             <div class="header-buttons">
-                <button id="jmpbtn">jump</button>
+
+                <button id="jmpbtn" class="topbtn">jump to bottom</button>
+                <button id="clearsaved" class="topbtn">Clear site data</button>
+                <br>
                 <button class="circle-btn btn-green" aria-label="Green theme" id="green"></button>
                 <button class="circle-btn btn-blue" aria-label="Blue theme" id="blue"></button>
                 <button class="circle-btn btn-red" aria-label="Red theme" id="red"></button>
                 <button class="circle-btn btn-purple" aria-label="Purple theme" id="purple"></button>
+
             </div>
+            <br><br>
             <h1>Editorial Image Gallery</h1>
             <p id="PA">A curated collection of images</p>
         </header>
@@ -355,14 +364,30 @@
 
     <script>
 
+        let clrbtn = document.getElementById("clearsaved");
 
+        clrbtn.addEventListener("click", function () {
+            if (clrbtn.textContent === "Clear site data") {
+                clrbtn.textContent = "Are you sure?";
+            } else {
+                localStorage.clear();
+
+                if (db) {
+                    const transaction = db.transaction("images", "readwrite");
+                    transaction.objectStore("images").clear();
+                }
+
+                clrbtn.textContent = "Clear site data";
+                document.getElementById("galleryGrid").innerHTML = "";
+            }
+        });
 
         document.getElementById("jmpbtn").addEventListener("click", function () {
             window.scrollTo({
                 top: document.body.scrollHeight,
                 behavior: "smooth"
             })
-        })
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
@@ -373,37 +398,55 @@
         let output = document.getElementById("output");
         let Input = document.getElementById("Input");
         let Button = document.getElementById("Button");
+        let fileinput = document.getElementById("fileinput");
 
-        let file = document.getElementById("fileinput");
+        let db = null;
 
-        let CurrentInput;
+        const dbRequest = indexedDB.open("LocalGalleryDB", 1);
+
+        dbRequest.onupgradeneeded = (e) => {
+            db = e.target.result;
+            db.createObjectStore("images", { autoIncrement: true });
+        };
+
+        dbRequest.onsuccess = (e) => {
+            db = e.target.result;
+            iscolor();
+            loadimg();
+        };
+
+        dbRequest.onerror = () => {
+            output.textContent = "Error initializing local media storage";
+        };
 
         function getImages() {
             let data = localStorage.getItem("theImage");
             return data ? JSON.parse(data) : [];
         }
 
-
-
-
-        function appendElements(url) {
+        function appendElements(url, dbKey = null) {
             let grid = document.getElementById("galleryGrid");
 
             let wrapper = document.createElement("div");
             wrapper.className = "gallery-grid-item";
+
             let img = document.createElement("img");
-
             img.src = url;
-
-
 
             let btn = document.createElement("button");
             btn.className = "btn";
 
             btn.addEventListener("click", function () {
                 wrapper.remove();
-                let images = getImages().filter(i => i !== url);
-                localStorage.setItem("theImage", JSON.stringify(images));
+
+                if (dbKey !== null && db) {
+                    const transaction = db.transaction("images", "readwrite");
+                    transaction.objectStore("images").delete(dbKey);
+                    URL.revokeObjectURL(url);
+                } else {
+                    let images = getImages().filter(i => i !== url);
+                    localStorage.setItem("theImage", JSON.stringify(images));
+                }
             });
 
             wrapper.appendChild(img);
@@ -412,22 +455,21 @@
         }
 
         fileinput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
+            const selectedFile = event.target.files[0];
 
+            if (selectedFile && db) {
+                const transaction = db.transaction("images", "readwrite");
+                const store = transaction.objectStore("images");
+                const addRequest = store.add(selectedFile);
 
-            if (file) {
-                const tempURL = URL.createObjectURL(file);
+                addRequest.onsuccess = (e) => {
+                    const insertedKey = e.target.result;
+                    const persistentLocalUrl = URL.createObjectURL(selectedFile);
 
-                localStorage.setItem("PATH",tempURL);
-
-                let lstURL = localStorage.getItem("PATH");
-
-                appendElements(lstURL);
-
-
-                let images = getImages();
-                images.push(lstURL);
-                localStorage.setItem("theImage", JSON.stringify(images));
+                    appendElements(persistentLocalUrl, insertedKey);
+                    fileinput.value = "";
+                    output.textContent = "Local file saved";
+                };
             }
         });
 
@@ -439,7 +481,7 @@
             let images = getImages();
             if (images.includes(input)) return;
 
-            output.textContent = "Fetching & Verifing image link..."
+            output.textContent = "Fetching & Verifying image link..."
 
             let request = await fetch("https://image-gallery-7dng.onrender.com/app", {
                 method: "POST",
@@ -460,38 +502,55 @@
 
         Button.addEventListener("click", function () {
             data();
-        })
+        });
 
         Input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
                 data();
             }
-        })
+        });
 
         function loadimg() {
-            getImages().forEach(appendElements);
+            document.getElementById("galleryGrid").innerHTML = "";
+
+
+            getImages().forEach(url => appendElements(url));
+
+
+            if (db) {
+                const transaction = db.transaction("images", "readonly");
+                const store = transaction.objectStore("images");
+                const request = store.openCursor();
+
+                request.onsuccess = (e) => {
+                    const cursor = e.target.result;
+                    if (cursor) {
+                        const persistentLocalUrl = URL.createObjectURL(cursor.value);
+                        appendElements(persistentLocalUrl, cursor.key);
+                        cursor.continue(); 
+                    }
+                };
+            }
         }
 
         const colors = {
             green: `background: #0F7A17;
-        background: -moz-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
-        background: -webkit-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
-        background: linear-gradient(to right, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);`,
+background: -moz-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+background: -webkit-linear-gradient(left, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);
+background: linear-gradient(to right, #0F7A17 0%, #0F8E10 0%, #27BC0C 100%);`,
             red: `background: #B70000;
-        background: -moz-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
-        background: -webkit-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
-        background: linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);`,
-
+background: -moz-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+background: -webkit-linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);
+background: linear-gradient(45deg, #B70000 0%, #B20000 36%, #FF0017 100%);`,
             blue: `background: #020751;
-        background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
-        background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
-        background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);`,
-
+background: -moz-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+background: -webkit-linear-gradient(left, #020751 0%, #042A6A 0%, #0B41B4 100%);
+background: linear-gradient(to right, #020751 0%, #042A6A 0%, #0B41B4 100%);`,
             purple: `background: #2F0453;
-        background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-        background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
-        background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);`
-        }
+background: -moz-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+background: -webkit-linear-gradient(left, #2F0453 0%, #490281 0%, #7B00D3 100%);
+background: linear-gradient(to right, #2F0453 0%, #490281 0%, #7B00D3 100%);`
+        };
 
         let greenbtn = document.getElementById("green");
         let bluebtn = document.getElementById("blue");
@@ -500,34 +559,29 @@
 
         greenbtn.addEventListener("click", function () {
             document.body.style.cssText = colors.green;
-            localStorage.setItem("theme", "green")
-        })
+            localStorage.setItem("theme", "green");
+        });
 
         bluebtn.addEventListener("click", function () {
             document.body.style.cssText = colors.blue;
-            localStorage.setItem("theme", "blue")
-        })
+            localStorage.setItem("theme", "blue");
+        });
 
         redbtn.addEventListener("click", function () {
             document.body.style.cssText = colors.red;
-            localStorage.setItem("theme", "red")
-        })
+            localStorage.setItem("theme", "red");
+        });
 
         purplebtn.addEventListener("click", function () {
             document.body.style.cssText = colors.purple;
-            localStorage.setItem("theme", "purple")
-        })
+            localStorage.setItem("theme", "purple");
+        });
 
         function iscolor() {
             let Theme = localStorage.getItem("theme");
             if (Theme && colors[Theme]) {
                 document.body.style.cssText = colors[Theme];
             }
-        }
-
-        window.onload = function () {
-            iscolor();
-            loadimg();
         }
 
 
