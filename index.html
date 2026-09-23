@@ -288,22 +288,21 @@
             }
         }
 
-        /* Smooth scrolling for the whole page */
+        
         html {
             scroll-behavior: smooth;
         }
 
-        /* Align the button container vertically */
+
         .header-buttons {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        /* Styled Jump Button */
+       
         #jmpbtn {
             height: 32px;
-            /* Matches the exact height of your circle-btn elements */
             padding: 0 14px;
             font-size: 0.85rem;
             font-weight: 600;
@@ -312,7 +311,6 @@
             background-color: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 16px;
-            /* Clean pill shape */
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -321,7 +319,6 @@
         #jmpbtn:hover {
             background-color: rgba(255, 255, 255, 0.25);
             transform: scale(1.05);
-            /* Parallel animation behavior to your theme circles */
             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
         }
 
@@ -417,15 +414,19 @@
         fileinput.addEventListener('change', (event) => {
             const file = event.target.files[0];
 
+
             if (file) {
                 const tempURL = URL.createObjectURL(file);
 
+                localStorage.setItem("PATH",tempURL);
 
-                appendElements(tempURL);
+                let lstURL = localStorage.getItem("PATH");
+
+                appendElements(lstURL);
 
 
                 let images = getImages();
-                images.push(tempURL);
+                images.push(lstURL);
                 localStorage.setItem("theImage", JSON.stringify(images));
             }
         });
