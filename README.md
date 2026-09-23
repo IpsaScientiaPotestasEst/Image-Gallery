@@ -5,4 +5,4 @@ This site is for both convenience & image/photograph presentation.
 
 Please do not claim the site itself as your own. Do not claim any image you display as you own. Thank you.
 
-Update Log: Added Dynamic customizable backgrounds (18/09/2026). Fixed bugs & refined GUI/UI (18/09/2026).
+Update Log: Added Dynamic customizable backgrounds (18/09/2026). Fixed bugs & refined GUI/UI (18/09/2026). Added clear site data button (23/09/2026). Added jump to bottom button (23/09/2026). Added local image file selection. (23/09/2026) Fixed bugs (23/09/2026). 
